@@ -10,8 +10,10 @@ guiconfig=[]
 
 def getHtmltext(url):
     """从URL中获取纯文本信息"""
-    print('正在从'+url+'获取信息……')
-    return requests.get(url).text
+    print('正在从 '+url+' 获取信息……')
+    htmltempdata = requests.get(url).text
+    print('获取信息完毕！')
+    return htmltempdata
     
 def getRandomMd5():
     """生成随机MD5作为ID"""
@@ -20,10 +22,15 @@ def getRandomMd5():
     return hash.hexdigest().upper()
     
 def getBase64(src):
+    '''返回字符串的base64编码'''
     return base64.b64encode(src.encode(encoding="utf-8")).decode()
     
 def getConfig(htmldata):
+    '''解析数据提取信息'''
     soup = BeautifulSoup(htmldata,'html.parser')
+    #soup.findAll('span',style="color: #ff6464;")[2].find('strong').text.split("\n")[0]
+    updatetime=soup.findAll('span',style="color: #ff6464;")[2].find('strong').text.split("\n")[0]
+    print('更新日期：'+str(updatetime))
     tabledata = soup.find('table',width="100%")
     trs = tabledata.findAll('tr')[1:] #去掉首行
     for tr in trs:
@@ -49,16 +56,26 @@ def getConfig(htmldata):
         #config['provider']=tds[5].getText()
         #config['ssurl']=tds[6].find("a",class_='dl1')['href'].split('url=')[-1]
         configs.append(config)
+    print('此次更新了'+str(len(configs))+'条数据')
+    print('更新完成！')
     return configs
 
 def loadConfig(filename):
-    with open(filename,'r',encoding='utf-8') as f_obj:
-        guiconfig = json.load(f_obj)
+    try:
+        with open(filename,'r',encoding='utf-8') as f_obj:
+            guiconfig = json.load(f_obj)
+    except FileNotFoundError:
+        msg = "文件 " + filename + " 并不存在，请确认程序运行在ShadowsocksR目录中！"
     return guiconfig
     
 def saveConfig(filename,data):
-    with open(filename,'w',encoding='utf-8') as f_obj:
-        f_obj.write(json.dumps(data,ensure_ascii=False,indent=2))
+    print('正在写入文件……')
+    try:
+        with open(filename,'w',encoding='utf-8') as f_obj:
+            f_obj.write(json.dumps(data,ensure_ascii=False,indent=2))
+    except FileNotFoundError:
+        msg = "文件 " + filename + " 并不存在，请确认程序运行在ShadowsocksR目录中！"
+    print('写入文件完成！')
     return 0 
 
 url='https://doub.io/sszhfx/'
@@ -72,3 +89,4 @@ guiconfig['configs']=configs
 saveConfig(filename,guiconfig)
 #print(loadConfig(filename)['configs'])
 #print(getRandomMd5())
+quit = input("请按 回车／Enter 退出……");
