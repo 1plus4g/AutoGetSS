@@ -10,29 +10,11 @@ guiconfig=[]
 
 def getHtmltext(url):
     """从URL中获取纯文本信息"""
-    #print(url)
+    print('正在从'+url+'获取信息……')
     return requests.get(url).text
     
-'''   
-def getConfig(htmldata):
-    soup = BeautifulSoup(htmldata,'html.parser')
-    tabledata = soup.find('table',width="100%")
-    trs = tabledata.findAll('tr')[1:] #去掉首行
-    for tr in trs:
-        config={}
-        tds=tr.findAll('td')
-        config['remarks']=tds[0].getText()
-        config['server']=tds[1].getText()
-        config['server_port']=tds[2].getText()
-        config['password']=tds[3].getText()
-        config['method']=tds[4].getText()
-        config['provider']=tds[5].getText()
-        config['ssurl']=tds[6].find("a",class_='dl1')['href'].split('url=')[-1]
-        configs.append(config)
-    return configs
-'''
-
 def getRandomMd5():
+    """生成随机MD5作为ID"""
     hash = hashlib.md5()
     hash.update(str(random.random()).encode('utf-8'))
     return hash.hexdigest().upper()
