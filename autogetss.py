@@ -27,6 +27,7 @@ def getBase64(src):
     
 def getConfig(htmldata):
     '''解析数据提取信息'''
+    print('正在解析数据……')
     soup = BeautifulSoup(htmldata,'html.parser')
     #soup.findAll('span',style="color: #ff6464;")[2].find('strong').text.split("\n")[0]
     updatetime=soup.findAll('span',style="color: #ff6464;")[2].find('strong').text.split("\n")[0]
@@ -37,6 +38,8 @@ def getConfig(htmldata):
         config={}
         tds=tr.findAll('td')
         if 'del' in str(tds[1]):
+            continue
+        if 'ssr://' in str(tds[6]):#去除ssR链接
             continue
         config['remarks']=tds[0].getText()
         config['id']=getRandomMd5()
@@ -66,6 +69,7 @@ def loadConfig(filename):
             guiconfig = json.load(f_obj)
     except FileNotFoundError:
         msg = "文件 " + filename + " 并不存在，请确认程序运行在ShadowsocksR目录中！"
+        print(msg)
     return guiconfig
     
 def saveConfig(filename,data):
@@ -75,6 +79,7 @@ def saveConfig(filename,data):
             f_obj.write(json.dumps(data,ensure_ascii=False,indent=2))
     except FileNotFoundError:
         msg = "文件 " + filename + " 并不存在，请确认程序运行在ShadowsocksR目录中！"
+        print(msg)
     print('写入文件完成！')
     return 0 
 
